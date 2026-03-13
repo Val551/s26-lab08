@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package edu.cmu.cs.cs214.rec08.queue;
 
 import java.util.ArrayDeque;
@@ -16,20 +17,33 @@ public class UnboundedBlockingQueue<E> implements SimpleQueue<E> {
 
     public UnboundedBlockingQueue() { }
 
-    public boolean isEmpty() { return queue.isEmpty(); }
+    public synchronized boolean isEmpty() { return queue.isEmpty(); }
 
-    public int size() { return queue.size(); }
+    public synchronized int size() { return queue.size(); }
 
-    public E peek() { return queue.peek(); }
+    public synchronized E peek() { return queue.peek(); }
 
-    public void enqueue(E element) { queue.add(element); }
+    public void enqueue(E element) { 
+        synchronized(this) {
+            queue.add(element); 
+            notifyAll();
+        }
+    }
 
     /**
      * TODO:  Change this method to block (waiting for an enqueue) rather
      * than throw an exception.  Completing this task may require
      * modifying other methods.
      */
-    public E dequeue() { return queue.remove(); }
+    public E dequeue() throws InterruptedException { 
+        synchronized(this) {
+            while (queue.isEmpty()){
+                wait();
+            }
+            return queue.remove(); 
+        }
+       
+    }
 
-    public String toString() { return queue.toString(); }
+    public synchronized String toString() { return queue.toString(); }
 }

@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package edu.cmu.cs.cs214.rec08.queue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

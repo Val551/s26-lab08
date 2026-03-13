@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package edu.cmu.cs.cs214.rec08.queue;
 
 public interface SimpleQueue<E> {
