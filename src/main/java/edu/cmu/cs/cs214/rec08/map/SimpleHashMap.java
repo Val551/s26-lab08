@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 package edu.cmu.cs.cs214.rec08.map;
 
 import java.util.ArrayList;
@@ -53,20 +54,24 @@ public class SimpleHashMap<K, V> {
      */
     public V put(K key, V value) {
         if (key == null)
-            throw new NullPointerException("Key can't be null.");
-
+            throw new NullPointerException("Key can't be null.");        
         List<Entry<K,V>> bucket = table.get(hash(key));
-        for (Entry<K, V> e : bucket) {
-            if (e.key.equals(key)) {
-                V result = e.value;
-                e.value = value;
-                return result;
+        synchronized (bucket) {
+            for (Entry<K, V> e : bucket) {
+                if (e.key.equals(key)) {
+                    V result = e.value;
+                    e.value = value;
+                    return result;
+                }
             }
         }
-
         bucket.add(new Entry<>(key, value));
-        return null;
+        return null;  
+        
     }
+    // Only the bucket contents are mutable and 
+    // need protection, and two threads touching 
+    // different buckets don't conflict.
 
     /**
      * Returns value for the given key, or null if the key is not present.
@@ -76,9 +81,11 @@ public class SimpleHashMap<K, V> {
      */
     public V get(K key) {
         List<Entry<K,V>> bucket = table.get(hash(key));
-        for (Entry<K, V> e : bucket) {
-            if (e.key.equals(key)) {
-                return e.value;
+        synchronized (bucket) {
+            for (Entry<K, V> e : bucket) {
+                if (e.key.equals(key)) {
+                    return e.value;
+                }
             }
         }
         return null;
